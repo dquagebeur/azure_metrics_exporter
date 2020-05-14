@@ -593,7 +593,7 @@ func resourceURLFrom(resource string, metricNamespace string, metricNames string
 		resource,
 	)
 
-	endTime, startTime := GetTimes()
+	endTime, startTime := GetTimes(resource)
 
 	values := url.Values{}
 	if metricNames != "" {
@@ -634,6 +634,10 @@ func (ac *AzureClient) getBatchResponseBody(urls []string) ([]byte, error) {
 	batchJSON, err := json.Marshal(batch)
 	if err != nil {
 		return nil, err
+	}
+
+	if (*verbose == true) {
+		fmt.Println(string(batchJSON))
 	}
 
 	req, err := http.NewRequest("POST", apiURL, bytes.NewBuffer(batchJSON))

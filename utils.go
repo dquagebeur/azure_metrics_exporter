@@ -31,13 +31,20 @@ func PrintPrettyJSON(input map[string]interface{}) {
 }
 
 // GetTimes - Returns the endTime and startTime used for querying Azure Metrics API
-func GetTimes() (string, string) {
+func GetTimes(resource string) (string, string) {
 	// Make sure we are using UTC
 	now := time.Now().UTC()
-
+	
 	// Use query delay of 3 minutes when querying for latest metric data
 	endTime := now.Add(time.Minute * time.Duration(-3)).Format(time.RFC3339)
 	startTime := now.Add(time.Minute * time.Duration(-4)).Format(time.RFC3339)
+
+	// StorageAccount need 1 hour range to return value
+	i := strings.Index(resource, "Microsoft.Storage/storageAccount")
+	if i != -1 {
+		startTime = now.Add(time.Minute * time.Duration(-63)).Format(time.RFC3339)
+	}
+
 	return endTime, startTime
 }
 
